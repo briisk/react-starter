@@ -48,8 +48,8 @@
     "test": "react-scripts-ts test --env=jsdom",
     "test:ci": "react-scripts-ts test --env=jsdom",
     "lint": "npm run lint:css && npm run lint:ts",
-    "lint:ts": "tslint \"src/**/*.ts\"",
-    "lint:css": "stylelint './**/*.tsx'",
+    "lint:ts": "tslint \"src/**/*.ts\" && tslint \"src/**/*.tsx\"",
+    "lint:css": "stylelint 'src/**/*.tsx'",
     "eject": "react-scripts-ts eject"
   }
 }
