@@ -7,6 +7,7 @@ import { counterSaga } from './counter/counter.saga';
 import { counterReducer as counter, CounterState, counterInitialState } from './counter/counter.reducer';
 import * as storage from 'redux-storage';
 import createEngine from 'redux-storage-engine-localstorage';
+import { apiMiddleware } from './services/api.middleware';
 
 export const history = createBrowserHistory();
 const sagaMiddleware = reduxSaga();
@@ -32,7 +33,7 @@ export function configureStore() {
   const engine = createEngine(storeKey);
   const middleware = storage.createMiddleware(engine);
   const createStoreWithMiddleware = composeEnhancers(
-    applyMiddleware(...[routerMiddleware(history), sagaMiddleware, middleware]))(createStore);
+    applyMiddleware(...[routerMiddleware(history), sagaMiddleware, middleware, apiMiddleware]))(createStore);
 
   const load = storage.createLoader(engine);
   const cachedStore = typeof window !== 'undefined'

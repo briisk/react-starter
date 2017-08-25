@@ -1,16 +1,13 @@
 import { put, takeEvery } from 'redux-saga/effects';
 import { INCREMENT, setValueInCounter } from './counter.actions';
-import { CALL_API } from 'redux-api-middleware';
+import { api } from '../services/api.middleware';
 
 function* increment() {
   yield put(setValueInCounter({ value: 2 }));
-  yield put({
-    [CALL_API]: {
-      endpoint: 'https://swapi.co/api/people/1/',
-      method: 'GET',
-      types: ['REQUEST_SWAPI', 'SUCCESS_SWAPI', 'FAILURE_SWAPI'],
-    },
-  } as any);
+  yield put(api.get('people/1/', {
+    success: 'SUCCESS_ACTION',
+    failure: 'FAILURE_ACTION',
+  }));
 }
 
 export function* counterSaga() {
