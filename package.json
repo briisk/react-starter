@@ -1,7 +1,30 @@
 {
   "name": "react-starter",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "license": "MIT",
+  "engines": {
+    "node": ">= 6.9.0",
+    "npm": ">= 3.0.0"
+  },
+  "author": "Daniel Koza <daniel.koza@briisk.co> (https://github.com/dakolech)",
+  "scripts": {
+    "precommit": "npm run lint",
+    "prepush": "npm run test:ci",
+    "init": "./copyEnvFiles.sh",
+    "start": "cp src/environments/environment.ts src/environments/index.ts && react-scripts-ts start",
+    "start:production": "cp src/environments/environment.prod.ts src/environments/index.ts &&  react-scripts-ts start",
+    "build:production": "cp src/environments/environment.prod.ts src/environments/index.ts && react-scripts-ts build",
+    "build:staging": "cp src/environments/environment.stag.ts src/environments/index.ts && react-scripts-ts build",
+    "build:workspace": "cp src/environments/environment.dev.ts src/environments/index.ts && react-scripts-ts build",
+    "build:dev": "cp src/environments/environment.ts src/environments/index.ts && react-scripts-ts build",
+    "test": "react-scripts-ts test --env=jsdom",
+    "test:ci": "CI=true react-scripts-ts test --env=jsdom",
+    "lint": "npm run lint:css && npm run lint:ts",
+    "lint:ts": "tslint \"src/**/*.ts\" && tslint \"src/**/*.tsx\"",
+    "lint:css": "stylelint 'src/**/*.tsx'",
+    "eject": "react-scripts-ts eject"
+  }
   "dependencies": {
     "@types/redux-storage": "^4.0.7",
     "font-awesome": "^4.7.0",
@@ -34,22 +57,5 @@
     "stylelint-config-standard": "^17.0.0",
     "stylelint-processor-styled-components": "^0.3.0",
     "typescript": "^2.5.1"
-  },
-  "scripts": {
-    "precommit": "npm run lint",
-    "prepush": "npm run test:ci",
-    "init": "./copyEnvFiles.sh",
-    "start": "cp src/environments/environment.ts src/environments/index.ts && react-scripts-ts start",
-    "start:production": "cp src/environments/environment.prod.ts src/environments/index.ts &&  react-scripts-ts start",
-    "build:production": "cp src/environments/environment.prod.ts src/environments/index.ts && react-scripts-ts build",
-    "build:staging": "cp src/environments/environment.stag.ts src/environments/index.ts && react-scripts-ts build",
-    "build:workspace": "cp src/environments/environment.dev.ts src/environments/index.ts && react-scripts-ts build",
-    "build:dev": "cp src/environments/environment.ts src/environments/index.ts && react-scripts-ts build",
-    "test": "react-scripts-ts test --env=jsdom",
-    "test:ci": "CI=true react-scripts-ts test --env=jsdom",
-    "lint": "npm run lint:css && npm run lint:ts",
-    "lint:ts": "tslint \"src/**/*.ts\" && tslint \"src/**/*.tsx\"",
-    "lint:css": "stylelint 'src/**/*.tsx'",
-    "eject": "react-scripts-ts eject"
   }
 }
