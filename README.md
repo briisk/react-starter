@@ -14,9 +14,9 @@ Run `npm run init` to initialize the app.
 
 ## Run application
 
-Run `npm start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Run `npm start` for a dev server. Navigate to `http://localhost:3000/`. The app will automatically reload if you change any of the source files.
 
-Run `npm start:production` for a dev server in the production mode. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Run `npm start:production` for a dev server in the production mode. Navigate to `http://localhost:3000/`. The app will automatically reload if you change any of the source files.
 
 ## Build
 
