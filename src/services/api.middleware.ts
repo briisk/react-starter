@@ -1,14 +1,14 @@
 /* tslint:disable */
 import { MiddlewareAPI, Dispatch, Action } from 'redux';
 
-const API_CALL = 'API_CALL';
+export const API_CALL = 'API_CALL';
 
 const absoluteURLPattern = /^((?:https:\/\/)|(?:http:\/\/)|(?:www))/;
 function generateUrl(url: string, baseUrl: string): string {
   return url.match(absoluteURLPattern) ? url : baseUrl + url;
 }
 
-interface Config {
+export interface Config {
   success: string;
   failure: string;
   type?: string;
@@ -40,7 +40,7 @@ export const api: Api = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
   },
-  baseUrl: 'https://swapi.co/api/',
+  baseUrl: '',
   headersFunctions: [],
   setHeader(key, value) {
     this.headers[key] = value;
