@@ -3,7 +3,7 @@ export const DECREMENT = '[Counter]: Decrement';
 export const RESET = '[Counter]: Reset';
 export const SET_VALUE = '[Counter]: Set value';
 
-interface SetValuePayload {
+export interface SetValuePayload {
   value: number;
 }
 
