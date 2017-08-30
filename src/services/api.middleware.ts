@@ -14,57 +14,38 @@ export interface Config {
   type?: string;
 }
 
-export interface Api {
-  headers: {
-    [key: string]: string;
-  };
-  baseUrl: string;
-  headersFunctions: Array<(state: any) => {
-    [key: string]: string;
-  }>;
-  setHeader: (key: string, value: string) => void;
-  setHeaderFromState: (fn: (state: any) => {
-    [key: string]: string;
-  }) => void;
-  removeHeader: (key: string) => void;
-  setBaseUrl: (url: string) => void;
-  get: (path: string, config: Config, params?: any) => Action;
-  post: (path: string, body: any, config: Config, params?: any) => Action;
-  put: (path: string, body: any, config: Config, params?: any) => Action;
-  patch: (path: string, body: any, config: Config, params?: any) => Action;
-  delete: (path: string, config: Config, params?: any) => Action;
+interface ApiCallAction extends Action {
+  payload: {
+    method: string;
+    path: string;
+    config: Config;
+    body?: any;
+    headers: any;
+  }
 }
 
+export interface Api {
+  get: (path: string, config: Config, headers?: any) => ApiCallAction;
+  post: (path: string, body: any, config: Config, headers?: any) => ApiCallAction;
+  put: (path: string, body: any, config: Config, headers?: any) => ApiCallAction;
+  patch: (path: string, body: any, config: Config, headers?: any) => ApiCallAction;
+  delete: (path: string, config: Config, headers?: any) => ApiCallAction;
+}
+
+
 export const api: Api = {
-  headers: {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-  },
-  baseUrl: '',
-  headersFunctions: [],
-  setHeader(key, value) {
-    this.headers[key] = value;
-  },
-  setHeaderFromState(fn) {
-    this.headersFunctions = [...this.headersFunctions, fn]
-  },
-  removeHeader(key) {
-    delete this.headers[key];
-  },
-  setBaseUrl(url: string) {
-    this.baseUrl = url;
-  },
-  get: (path, config) => {
+  get: (path, config, headers = {}) => {
     return {
       type: API_CALL,
       payload: {
         path,
         config,
         method: 'GET',
+        headers,
       },
     };
   },
-  post: (path, body, config) => {
+  post: (path, body, config, headers = {}) => {
     return {
       type: API_CALL,
       payload: {
@@ -72,10 +53,11 @@ export const api: Api = {
         config,
         method: 'POST',
         body,
+        headers,
       },
     };
   },
-  put: (path, body, config) => {
+  put: (path, body, config, headers = {}) => {
     return {
       type: API_CALL,
       payload: {
@@ -83,10 +65,11 @@ export const api: Api = {
         config,
         method: 'PUT',
         body,
+        headers,
       },
     };
   },
-  patch: (path, body, config) => {
+  patch: (path, body, config, headers = {}) => {
     return {
       type: API_CALL,
       payload: {
@@ -94,67 +77,103 @@ export const api: Api = {
         config,
         method: 'PATCH',
         body,
+        headers,
       },
     };
   },
-  delete: (path, config) => {
+  delete: (path, config, headers = {}) => {
     return {
       type: API_CALL,
       payload: {
         path,
         config,
         method: 'DELETE',
+        headers,
       },
     };
   },
 };
 
-interface ApiCallAction extends Action {
-  payload: {
-    method: string;
-    path: string;
-    config: Config;
-    body: any;
-  }
+interface ApiConfig {
+  headers: {
+    [key: string]: string|string[];
+  },
+  baseUrl: string;
 }
 
-export const apiMiddleware: any =
-  <S>({ getState }: MiddlewareAPI<S>) =>
-    (next: Dispatch<S>) =>
-      async (action: ApiCallAction): Promise<any> => {
-        if (action.type !== API_CALL) {
-          return next(action);
+function getStateHeaders(headers: any, state: any): any {
+  return Object.keys(headers).reduce((acc: any, curr: string) => {
+    if (Array.isArray(acc[curr])) {
+      let stateValue = state;
+      let index = 0;
+      while (index < acc[curr].length) {
+        if (stateValue == null) {
+          return {
+            ...acc,
+            [curr]: '',
+          };
         }
+        stateValue = stateValue[acc[curr][index]];
+        index += 1;
+      }
 
-        next({ ...action, type: action.payload.config.type || action.type });
+      return {
+        ...acc,
+        [curr]: String(stateValue) || '',
+      }
+    }
+    return acc;
+  }, headers);
+}
 
-        const state = getState();
-        const headers = api.headersFunctions.reduce((acc, fn: any) => ({ ...acc, ...fn(state) }),  api.headers);
+export const apiMiddlewareCreator: any =
+  (apiConfig: ApiConfig) => {
+    const defaultHeaders = {
+      Accept: 'application/json',
+     'Content-Type': 'application/json',
+    };
 
-        const baseUrl = generateUrl(action.payload.path, api.baseUrl);
-        const response = await fetch(baseUrl, {
-          method: action.payload.method,
-          headers,
-          body: JSON.stringify(['POST', 'PATCH', 'PUT'].includes(action.payload.method) ? action.payload.body : undefined)
-        });
+    return <S>({ getState }: MiddlewareAPI<S>) =>
+      (next: Dispatch<S>) =>
+        async (action: ApiCallAction): Promise<any> => {
+          if (action.type !== API_CALL) {
+            return next(action);
+          }
 
-        let json;
-        let error;
-        try {
-          json = await response.json();
-        } catch(_) {
-          error = `${response.status} ${response.statusText}`;
-        }
+          next({ ...action, type: action.payload.config.type || action.type });
 
-        if (response.ok) {
-          return next({
-            payload: json,
-            type: action.payload.config.success,
+          const state = getState();
+          const headers = {
+            ...defaultHeaders,
+            ...getStateHeaders(apiConfig.headers, state),
+            ...getStateHeaders(action.payload.headers, state),
+          };
+
+          const baseUrl = generateUrl(action.payload.path, apiConfig.baseUrl || '');
+          const response = await fetch(baseUrl, {
+            method: action.payload.method,
+            headers,
+            body: JSON.stringify(['POST', 'PATCH', 'PUT'].includes(action.payload.method) ? action.payload.body : undefined)
           });
-        } else {
-          return next({
-            payload: error || json,
-            type: action.payload.config.failure,
-          });
-        }
-      };
+
+          let json;
+          let error;
+          try {
+            json = await response.json();
+          } catch (_) {
+            error = `${response.status} ${response.statusText}`;
+          }
+
+          if (response.ok) {
+            return next({
+              payload: json,
+              type: action.payload.config.success,
+            });
+          } else {
+            return next({
+              payload: error || json,
+              type: action.payload.config.failure,
+            });
+          }
+        };
+  };
