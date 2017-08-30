@@ -14,7 +14,7 @@ export interface Config {
   type?: string;
 }
 
-interface Api {
+export interface Api {
   headers: {
     [key: string]: string;
   };
@@ -54,80 +54,66 @@ export const api: Api = {
   setBaseUrl(url: string) {
     this.baseUrl = url;
   },
-  get: (path, config, params = {}) => {
+  get: (path, config) => {
     return {
       type: API_CALL,
       payload: {
         path,
         config,
         method: 'GET',
-        params,
       },
     };
   },
-  post: (path, body, config, params = {}) => {
+  post: (path, body, config) => {
     return {
       type: API_CALL,
       payload: {
         path,
         config,
         method: 'POST',
-        params,
         body,
       },
     };
   },
-  put: (path, body, config, params = {}) => {
+  put: (path, body, config) => {
     return {
       type: API_CALL,
       payload: {
         path,
         config,
         method: 'PUT',
-        params,
         body,
       },
     };
   },
-  patch: (path, body, config, params = {}) => {
+  patch: (path, body, config) => {
     return {
       type: API_CALL,
       payload: {
         path,
         config,
         method: 'PATCH',
-        params,
         body,
       },
     };
   },
-  delete: (path, config, params = {}) => {
+  delete: (path, config) => {
     return {
       type: API_CALL,
       payload: {
         path,
         config,
         method: 'DELETE',
-        params,
       },
     };
   },
 };
-
-function getUrlQueryByObject(data: any) {
-  return Object.keys(data)
-    .reduce((prev, filter) => `${prev}&filter[${filter}]=${data[filter]}`.replace(/^&/, '?')
-      , '');
-}
 
 interface ApiCallAction extends Action {
   payload: {
     method: string;
     path: string;
     config: Config;
-    params: {
-      [key: string]: string;
-    };
     body: any;
   }
 }
@@ -146,8 +132,7 @@ export const apiMiddleware: any =
         const headers = api.headersFunctions.reduce((acc, fn: any) => ({ ...acc, ...fn(state) }),  api.headers);
 
         const baseUrl = generateUrl(action.payload.path, api.baseUrl);
-        const urlQuery = getUrlQueryByObject(action.payload.params);
-        const response = await fetch(`${baseUrl}${urlQuery}`, {
+        const response = await fetch(baseUrl, {
           method: action.payload.method,
           headers,
           body: JSON.stringify(['POST', 'PATCH', 'PUT'].includes(action.payload.method) ? action.payload.body : undefined)
