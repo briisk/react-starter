@@ -24,7 +24,7 @@
     "lint:ts": "tslint \"src/**/*.ts\" && tslint \"src/**/*.tsx\"",
     "lint:css": "stylelint 'src/**/*.tsx'",
     "eject": "react-scripts-ts eject"
-  }
+  },
   "dependencies": {
     "@types/redux-storage": "^4.0.7",
     "font-awesome": "^4.7.0",
