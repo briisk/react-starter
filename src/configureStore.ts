@@ -7,7 +7,7 @@ import { counterSaga } from './counter/counter.saga';
 import { counterReducer as counter, CounterState, counterInitialState } from './counter/counter.reducer';
 import * as storage from 'redux-storage';
 import createEngine from 'redux-storage-engine-localstorage';
-import { apiMiddlewareCreator } from './services/api.middleware';
+import { apiMiddlewareCreator } from 'redux-middleware-api-fetch';
 
 import { environment } from './environments';
 import { AppState } from './configureStore';
