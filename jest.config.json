@@ -12,7 +12,7 @@
   ],
   "mapCoverage": true,
   "collectCoverageFrom": ["src/**/*.{ts,tsx}"],
-  "setupFiles": ["react-scripts-ts/config/polyfills.js"],
+  "setupFiles": ["react-scripts-ts/config/polyfills.js", "./src/testSetup.js"],
   "testEnvironment": "node",
   "testURL": "http://localhost",
   "transformIgnorePatterns": [

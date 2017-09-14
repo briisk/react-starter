@@ -26,7 +26,6 @@
     "eject": "react-scripts-ts eject"
   },
   "dependencies": {
-    "@types/redux-storage": "^4.0.7",
     "font-awesome": "^4.7.0",
     "husky": "^0.14.3",
     "ramda": "^0.24.1",
@@ -37,6 +36,7 @@
     "react-router-redux": "^4.0.8",
     "react-scripts-ts": "2.5.0",
     "redux": "^3.7.2",
+    "redux-middleware-api-fetch": "^0.1.1",
     "redux-saga": "^0.15.6",
     "redux-storage": "^4.1.2",
     "redux-storage-engine-localstorage": "^1.1.4",
@@ -44,6 +44,8 @@
   },
   "devDependencies": {
     "@briisk/tslint-config": "^0.0.2",
+    "@types/enzyme": "^2.8.6",
+    "@types/jasmine-enzyme": "^3.6.0",
     "@types/jest": "^20.0.5",
     "@types/node": "^8.0.17",
     "@types/ramda": "^0.24.5",
@@ -53,6 +55,12 @@
     "@types/react-router": "^4.0.14",
     "@types/react-router-redux": "^5.0.4",
     "@types/redux": "^3.6.0",
+    "@types/redux-mock-store": "0.0.10",
+    "@types/redux-storage": "^4.0.7",
+    "enzyme": "^2.9.1",
+    "jasmine-enzyme": "^3.8.1",
+    "react-test-renderer": "^15.6.1",
+    "redux-mock-store": "^1.2.3",
     "stylelint": "^8.0.0",
     "stylelint-config-standard": "^17.0.0",
     "stylelint-processor-styled-components": "^0.3.0",

@@ -47,7 +47,7 @@ export function configureStore() {
 
   const load = storage.createLoader(engine);
   const cachedStore = typeof window !== 'undefined'
-    ? !!localStorage.getItem(storeKey)
+    ? !!window.localStorage.getItem(storeKey)
     : false;
 
   const store = initialState && !cachedStore ?
